@@ -1,0 +1,19 @@
+{
+    "name": "camspiers/php-trait-convert",
+    "type": "library",
+    "description": "Convert build 5.3 support into 5.4 projects",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Cam Spiers",
+            "email": "cameron@heyday.co.nz",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.4.0"
+    },
+    "autoload": {
+        "psr-0": {"Camspiers": "src/"}
+    }
+}
