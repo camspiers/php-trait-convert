@@ -8,12 +8,19 @@ class Converter
 	protected $classes;
 	protected $outputDirectory;
 
-	public function __construct($classes)
+	public function __construct($classes, $outputDirectory = null)
 	{
 		if (is_array($classes)) {
 			$this->classes = $classes;
 		} else {
-			throw new InvalidArgumentException('$classes must be an array of classes');			
+			throw new \InvalidArgumentException('$classes must be an array of classes');			
+		}
+		if (!is_null($outputDirectory)) {
+			if (file_exists($outputDirectory) && is_writable($outputDirectory)) {
+				$this->outputDirectory = realpath($outputDirectory);
+			} else {
+				throw new \InvalidArgumentException();
+			}
 		}
 	}
 
@@ -37,21 +44,27 @@ class Converter
 						)
 					);
 				}
-
 			}
 
 			$file = file($obj->getFileName(), FILE_IGNORE_NEW_LINES);
 
+			$useStatements = array();
+
+			foreach ($file as $key => $value) {
+				if (preg_match("/(\s)*use /", $value) === 1) {
+					$file[$key] = '';
+				}
+			}
+
 			array_splice($file, $obj->getEndLine() - 1, 0, $content);
 
-			// foreach ($file as $key => $value) {
-			// 	if (is_array($traits)) {
-			// 		foreach ($traits as $trait) {
-			// 		}
-			// 	}
-			// }
+			if ($this->outputDirectory) {
+				$filename = $this->outputDirectory . '/' . basename($obj->getFileName());
+			} else {
+				$filename = $obj->getFileName();
+			}
 
-			file_put_contents($obj->getFileName(), implode(PHP_EOL, $file));
+			file_put_contents($filename, implode(PHP_EOL, $file));
 
 		}
 
